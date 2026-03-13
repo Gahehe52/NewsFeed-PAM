@@ -1,48 +1,60 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Desktop (JVM).
+# Tugas Praktikum 2: News Feed Simulator
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+* **Nama:** Muhammad Ghama Al Fajri
+* **NIM:** 123140182
 
-* [/iosApp](./iosApp/iosApp) contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
-
-### Build and Run Android Application
-
-To build and run the development version of the Android app, use the run configuration from the run widget
-in your IDE’s toolbar or build it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:assembleDebug
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:assembleDebug
-  ```
-
-### Build and Run Desktop (JVM) Application
-
-To build and run the development version of the desktop app, use the run configuration from the run widget
-in your IDE’s toolbar or run it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:run
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:run
-  ```
-
-### Build and Run iOS Application
-
-To build and run the development version of the iOS app, use the run configuration from the run widget
-in your IDE’s toolbar or open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+Aplikasi **News Feed Simulator** dibangun menggunakan **Kotlin Multiplatform (KMP)** dan **Compose Multiplatform**. Proyek ini bertujuan untuk mengimplementasikan *Asynchronous Programming* menggunakan Kotlin Coroutines dan aliran data reaktif menggunakan Kotlin Flow.
 
 ---
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+### ✨ Fitur Utama (Sesuai Persyaratan Tugas)
+
+Aplikasi ini telah memenuhi 5 kriteria utama dari tugas praktikum:
+
+1. **Simulasi Data dengan Flow:** Menggunakan `flow {}` builder untuk memancarkan (emit) data berita baru secara berurutan dengan jeda waktu (`delay`) secara simulasi.
+2. **Filter Kategori Berita:** Menggunakan operator `.filter {}` pada Flow untuk hanya menyaring dan mengalirkan berita dengan kategori spesifik (contoh: "Tech").
+3. **Transformasi Data:** Data berita yang mentah diubah (*transform*) formatnya sebelum dikumpulkan dan ditampilkan ke antarmuka pengguna (UI).
+4. **State Management dengan StateFlow:** Menggunakan `StateFlow` untuk menyimpan, mengamati, dan memperbarui *state* jumlah berita unik yang telah dibaca oleh pengguna secara *real-time*.
+5. **Coroutines untuk Async Task:** Menggunakan *suspend functions* (`delay`, `withContext`) dan *CoroutineScope* untuk mensimulasikan pengambilan detail berita secara *asynchronous* (tanpa memblokir *Main/UI Thread*) saat tombol "Baca" ditekan.
+
+---
+
+### 🛠️ Teknologi & Arsitektur
+* **Bahasa:** Kotlin
+* **UI Framework:** Compose Multiplatform (Material 3)
+* **Asynchronous:** Kotlinx Coroutines (`launch`, `Dispatchers.Default`)
+* **Reactive Streams:** Kotlin Flow, StateFlow
+* **Struktur Proyek:** KMP Single-Module (`composeApp`)
+
+---
+
+### 🚀 Cara Menjalankan Aplikasi
+
+Pastikan Anda telah menginstal JDK 17 (atau lebih baru) dan Android Studio terbaru.
+
+**1. Menjalankan di Android Emulator / Device:**
+* Buka proyek ini menggunakan Android Studio.
+* Tunggu hingga proses *Gradle Sync* selesai.
+* Pada *toolbar* atas, pilih konfigurasi **`composeApp`** dan pilih perangkat/emulator Android Anda.
+* Klik tombol **Run** (Ikon Segitiga Hijau) atau gunakan *shortcut* `Shift + F10`.
+
+*Atau melalui terminal:*
+```bash
+./gradlew :composeApp:installDebug
+
+```
+
+**2. Menjalankan di Desktop (JVM):**
+Aplikasi ini juga mendukung platform Desktop karena menggunakan Compose Multiplatform.
+Buka terminal di dalam Android Studio dan jalankan perintah berikut:
+
+```bash
+./gradlew :composeApp:run
+
+```
+
+---
+
+### 📸 Screenshot Aplikasi
+
+<img src="ss/ss1.png">  <img src="ss/ss2.png">
