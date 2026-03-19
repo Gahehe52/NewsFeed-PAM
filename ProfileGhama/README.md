@@ -1,48 +1,37 @@
-This is a Kotlin Multiplatform project targeting Android, iOS, Desktop (JVM).
+# ProfileGhama - My Profile App
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+- Nama: Muhammad Ghama Al Fajri
+- NIM: 123140182
 
-* [/iosApp](./iosApp/iosApp) contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+Aplikasi profil pribadi modern yang dibangun menggunakan **Compose Multiplatform**. Aplikasi ini menampilkan informasi profil pengguna dengan antarmuka yang bersih, animasi yang halus, dan tema warna kustom.
 
-### Build and Run Android Application
+## ✨ Fitur Utama
+- **Header Profil:** Menampilkan foto profil melingkar dengan bingkai emas (*gold ring*) yang elegan.
+- **Kartu Tentang Saya:** Deskripsi singkat mengenai latar belakang dan minat.
+- **Informasi Kontak Dinamis:** Menampilkan detail kontak (Email, Telepon, Lokasi) menggunakan animasi `AnimatedVisibility`.
+- **Tema Kustom:** Desain menggunakan palet warna khusus `#7B8CB6` untuk memberikan kesan profesional dan modern.
+- **Komponen Reusable:** Dibangun dengan fungsi Composable yang modular seperti `ProfileHeader`, `ProfileCard`, dan `InfoItem`.
 
-To build and run the development version of the Android app, use the run configuration from the run widget
-in your IDE’s toolbar or build it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:assembleDebug
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:assembleDebug
-  ```
+## 🛠️ Teknologi yang Digunakan
+- **Kotlin:** Bahasa pemrograman utama.
+- **Compose Multiplatform:** UI Framework deklaratif untuk Android, iOS, dan Desktop.
+- **Material 3:** Sistem desain terbaru dari Google untuk komponen UI.
+- **Compose Resources:** Manajemen sumber daya (gambar/ikon) lintas platform.
 
-### Build and Run Desktop (JVM) Application
 
-To build and run the development version of the desktop app, use the run configuration from the run widget
-in your IDE’s toolbar or run it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:run
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:run
-  ```
-
-### Build and Run iOS Application
-
-To build and run the development version of the iOS app, use the run configuration from the run widget
-in your IDE’s toolbar or open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+## 🚀 Cara Menjalankan
+1. **Prasyarat:** Pastikan Anda memiliki Android Studio (versi terbaru) dan JDK 17+.
+2. **Clone Proyek:**
+   ```bash
+   git clone https://github.com/username/ProfileGhama.git
+   ```
+3. **Buka di Android Studio:** Pilih folder proyek `ProfileGhama`.
+4. **Jalankan Aplikasi:**
+    - Untuk **Android**: Pilih konfigurasi `composeApp` dan klik tombol **Run**.
+    - Untuk **Desktop**: Jalankan perintah `./gradlew :composeApp:run` di terminal.
 
 ---
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+### 📸 Screenshot Aplikasi
+
+<img src="ss/ss1.png">  <img src="ss/ss2.png">
