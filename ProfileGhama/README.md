@@ -1,4 +1,4 @@
-# ProfileGhama - My Profile App
+# ProfileGhama - My Profile App (Tugas Praktikum 3)
 
 - Nama: Muhammad Ghama Al Fajri
 - NIM: 123140182
@@ -35,3 +35,48 @@ Aplikasi profil pribadi modern yang dibangun menggunakan **Compose Multiplatform
 ### 📸 Screenshot Aplikasi
 
 <img src="ss/ss1.png">  <img src="ss/ss2.png">
+
+# Tugas Praktikum 4
+
+Pada pembaruan ini, aplikasi telah dikembangkan lebih lanjut dengan menerapkan pola arsitektur MVVM dan penambahan beberapa fitur interaktif baru sesuai dengan ketentuan Tugas Praktikum Minggu 4.
+
+### ✨ Fitur Baru (Minggu 4)
+
+1.  **Implementasi MVVM Pattern:**
+
+      - Memisahkan logika bisnis dari UI menggunakan `ProfileViewModel`.
+      - Mengelola state aplikasi menggunakan `StateFlow`.
+      - Menambahkan data class `ProfileUiState` untuk merangkum seluruh state UI (nama, bio, mode gelap, status edit).
+
+2.  **Fitur Edit Profil:**
+
+      - Menyediakan form interaktif bagi pengguna untuk mengubah data Nama, Subtitle, dan Bio.
+      - Menggunakan konsep *State Hoisting* pada komponen `TextField` agar state dapat dikelola dengan baik.
+      - Tombol "Simpan" yang secara langsung memperbarui data di dalam ViewModel.
+
+3.  **Fitur Dark Mode Toggle:**
+
+      - Menambahkan tombol *switch* (ikon toggle) interaktif untuk mengubah tema antara *Light Mode* dan *Dark Mode*.
+      - Status tema disimpan dan dikelola melalui ViewModel, diiringi dengan animasi transisi warna latar belakang dan teks yang halus.
+
+### 📁 Struktur Folder
+
+Pembaruan ini juga mendukung restrukturisasi kode menjadi lebih modular:
+
+  - `ui/`: Berisi seluruh komponen Composable UI (ProfileScreen, EditForm, ProfileCard, dll).
+  - `viewmodel/`: Berisi `ProfileViewModel` sebagai pengelola *state* dan *business logic*.
+  - `data/`: Berisi *data class* `ProfileUiState` (serta pengaturan *persistence* jika ada).
+
+### 📸 Screenshot Aplikasi (Tugas 4)
+
+**Tampilan Profil & Dark Mode Toggle dan Perbandingan Mode Light dan Dark**
+<br>
+<img src="ss/ss3.png"> <img src="ss/ss4.png">
+
+**Tampilan Form Edit Profil**
+<br>
+<img src="ss/ss5.png">
+
+**Tampilan Setelah Edit Form**
+<br>
+<img src="ss/ss6.png">
