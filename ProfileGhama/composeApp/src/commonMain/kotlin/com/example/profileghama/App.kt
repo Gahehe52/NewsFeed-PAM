@@ -29,9 +29,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import org.jetbrains.compose.resources.painterResource
-import androidx.compose.ui.tooling.preview.Preview
-import profileghama.composeapp.generated.resources.Res
-import profileghama.composeapp.generated.resources.my_profile_pic
+import com.example.profileghama.Res
+import com.russhwolf.settings.Settings
 
 data class ProfileUiState(
     val name: String = "Muhammad Ghama Al Fajri",
@@ -45,7 +44,16 @@ data class ProfileUiState(
 )
 
 class ProfileViewModel : ViewModel() {
-    private val _uiState = MutableStateFlow(ProfileUiState())
+    private val settings: Settings = Settings()
+    
+    private val _uiState = MutableStateFlow(
+        ProfileUiState(
+            name = settings.getString("name", "Muhammad Ghama Al Fajri"),
+            subtitle = settings.getString("subtitle", "Teknik Informatika (123140182)"),
+            bio = settings.getString("bio", "Mahasiswa Teknik Informatika angkatan 2023 di Institut Teknologi Sumatera yang tertarik di bidang Artificial Intelligence dan pengembangan perangkat lunak."),
+            isDarkMode = settings.getBoolean("isDarkMode", false)
+        )
+    )
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
 
     fun toggleEdit() {
@@ -53,17 +61,29 @@ class ProfileViewModel : ViewModel() {
     }
 
     fun toggleDarkMode() {
-        _uiState.update { it.copy(isDarkMode = !it.isDarkMode) }
+        val newMode = !_uiState.value.isDarkMode
+        settings.putBoolean("isDarkMode", newMode)
+        _uiState.update { it.copy(isDarkMode = newMode) }
     }
 
-    fun updateProfile(name: String, subtitle: String, bio: String) {
-        _uiState.update { it.copy(name = name, subtitle = subtitle, bio = bio, isEditing = false) }
+    fun updateProfile(newName: String, newSubtitle: String, newBio: String) {
+        settings.putString("name", newName)
+        settings.putString("subtitle", newSubtitle)
+        settings.putString("bio", newBio)
+        
+        _uiState.update { 
+            it.copy(
+                name = newName, 
+                subtitle = newSubtitle, 
+                bio = newBio, 
+                isEditing = false 
+            ) 
+        }
     }
 }
 
 @Composable
-@Preview
-fun App(viewModel: ProfileViewModel = viewModel { ProfileViewModel() }) {
+fun App(viewModel: ProfileViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     val customThemeColor = Color(0xFF7B8CB6)
@@ -76,10 +96,6 @@ fun App(viewModel: ProfileViewModel = viewModel { ProfileViewModel() }) {
         targetValue = if (uiState.isDarkMode) Color(0xFF2C2C2C) else Color(0xFFF0F2F8),
         animationSpec = tween(durationMillis = 500)
     )
-    val animatedPrimary by animateColorAsState(
-        targetValue = customThemeColor,
-        animationSpec = tween(durationMillis = 500)
-    )
     val animatedOnSurface by animateColorAsState(
         targetValue = if (uiState.isDarkMode) Color.White else Color.Black,
         animationSpec = tween(durationMillis = 500)
@@ -87,7 +103,7 @@ fun App(viewModel: ProfileViewModel = viewModel { ProfileViewModel() }) {
 
     val colorScheme = if (uiState.isDarkMode) {
         darkColorScheme(
-            primary = animatedPrimary,
+            primary = customThemeColor,
             onPrimary = Color.White,
             surface = animatedBgColor,
             background = animatedBgColor,
@@ -96,7 +112,7 @@ fun App(viewModel: ProfileViewModel = viewModel { ProfileViewModel() }) {
         )
     } else {
         lightColorScheme(
-            primary = animatedPrimary,
+            primary = customThemeColor,
             onPrimary = Color.White,
             surface = animatedBgColor,
             background = animatedBgColor,
@@ -119,28 +135,10 @@ fun App(viewModel: ProfileViewModel = viewModel { ProfileViewModel() }) {
                         .padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = if (uiState.isDarkMode) "Dark Mode" else "Light Mode",
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        Spacer(Modifier.width(8.dp))
-                        FilledTonalIconToggleButton(
-                            checked = uiState.isDarkMode,
-                            onCheckedChange = { viewModel.toggleDarkMode() },
-                            modifier = Modifier.size(48.dp)
-                        ) {
-                            Icon(
-                                imageVector = if (uiState.isDarkMode) Icons.Default.LightMode else Icons.Default.DarkMode,
-                                contentDescription = "Toggle Dark Mode"
-                            )
-                        }
-                    }
+                    DarkModeToggle(
+                        isDarkMode = uiState.isDarkMode,
+                        onToggle = { viewModel.toggleDarkMode() }
+                    )
 
                     Spacer(modifier = Modifier.height(8.dp))
 
@@ -168,40 +166,36 @@ fun App(viewModel: ProfileViewModel = viewModel { ProfileViewModel() }) {
 
                         Spacer(modifier = Modifier.height(16.dp))
 
-                        var showContactInfo by remember { mutableStateOf(false) }
-                        
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Button(
-                                onClick = { showContactInfo = !showContactInfo },
-                                elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
-                            ) {
-                                Text(if (showContactInfo) "Sembunyikan Kontak" else "Tampilkan Kontak")
-                            }
-                            OutlinedButton(onClick = { viewModel.toggleEdit() }) {
-                                Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(18.dp))
-                                Spacer(Modifier.width(8.dp))
-                                Text("Edit Profil")
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        AnimatedVisibility(visible = showContactInfo) {
-                            Card(
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(12.dp),
-                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-                            ) {
-                                Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                                    InfoItem(icon = Icons.Default.Email, text = uiState.email)
-                                    InfoItem(icon = Icons.Default.Phone, text = uiState.phone)
-                                    InfoItem(icon = Icons.Default.LocationOn, text = uiState.location)
-                                }
-                            }
-                        }
+                        ContactSection(uiState = uiState, onEditClick = { viewModel.toggleEdit() })
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun DarkModeToggle(isDarkMode: Boolean, onToggle: () -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.End,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = if (isDarkMode) "Dark Mode" else "Light Mode",
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.primary
+        )
+        Spacer(Modifier.width(8.dp))
+        FilledTonalIconToggleButton(
+            checked = isDarkMode,
+            onCheckedChange = { onToggle() },
+            modifier = Modifier.size(48.dp)
+        ) {
+            Icon(
+                imageVector = if (isDarkMode) Icons.Default.LightMode else Icons.Default.DarkMode,
+                contentDescription = "Toggle Dark Mode"
+            )
         }
     }
 }
@@ -225,6 +219,7 @@ fun EditForm(
     ) {
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text("Edit Profil", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = MaterialTheme.colorScheme.primary)
+            
             OutlinedTextField(
                 value = name, 
                 onValueChange = { name = it }, 
@@ -232,6 +227,7 @@ fun EditForm(
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
+            
             OutlinedTextField(
                 value = subtitle, 
                 onValueChange = { subtitle = it }, 
@@ -239,6 +235,7 @@ fun EditForm(
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
+            
             OutlinedTextField(
                 value = bio, 
                 onValueChange = { bio = it }, 
@@ -246,6 +243,7 @@ fun EditForm(
                 modifier = Modifier.fillMaxWidth(), 
                 minLines = 3
             )
+            
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
                 TextButton(onClick = onCancel) { Text("Batal") }
                 Spacer(Modifier.width(8.dp))
@@ -295,18 +293,56 @@ fun ProfileCard(title: String, description: String) {
 }
 
 @Composable
-fun InfoItem(icon: ImageVector, text: String) {
-    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Surface(
-            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
-            shape = CircleShape,
-            modifier = Modifier.size(36.dp)
-        ) {
-            Box(contentAlignment = Alignment.Center) {
-                Icon(imageVector = icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
+fun ContactSection(uiState: ProfileUiState, onEditClick: () -> Unit) {
+    var showContactInfo by remember { mutableStateOf(false) }
+    
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Button(
+                onClick = { showContactInfo = !showContactInfo },
+                elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
+            ) {
+                Icon(
+                    imageVector = if (showContactInfo) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                    contentDescription = null
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(if (showContactInfo) "Sembunyikan Kontak" else "Lihat Kontak")
+            }
+            
+            OutlinedButton(
+                onClick = onEditClick,
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
+            ) {
+                Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(18.dp))
+                Spacer(Modifier.width(8.dp))
+                Text("Edit Profil")
             }
         }
-        Spacer(modifier = Modifier.width(16.dp))
-        Text(text = text, fontSize = 14.sp, fontWeight = FontWeight.Medium)
+
+        AnimatedVisibility(visible = showContactInfo) {
+            Card(
+                modifier = Modifier.padding(top = 16.dp).fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+            ) {
+                Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    ContactItem(Icons.Default.Email, "Email", uiState.email)
+                    ContactItem(Icons.Default.Phone, "Telepon", uiState.phone)
+                    ContactItem(Icons.Default.LocationOn, "Lokasi", uiState.location)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ContactItem(icon: ImageVector, label: String, value: String) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
+        Spacer(Modifier.width(12.dp))
+        Column {
+            Text(label, style = MaterialTheme.typography.labelSmall, color = Color.Gray)
+            Text(value, style = MaterialTheme.typography.bodyMedium)
+        }
     }
 }
